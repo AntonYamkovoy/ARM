@@ -1,0 +1,40 @@
+start
+	LDR	R1, =strSrc
+	LDR	R2, =strDst
+
+	;get length of the string
+;by counting down store the first charcter of the new string to a furthr character
+
+	MOV R3, #0		;initialise the counter
+	
+	B stringCompare
+operateString
+	ADD R1, R1, #1 		;addr1++, moving by bytes
+	ADD R3, R3, #1		;increment the character counter
+	
+stringCompare
+	LDRB R4, [R1]	;store the first ascii code into R3
+	CMP R4, #0
+	BNE operateString	;exit loop when NULL character read
+	
+	
+	LDR R1, =strSrc ;reset the address
+	ADD R5, R1, R3 ;store the address of the last byte in R5
+	SUB R5, R5, #1
+	
+	B stringReverseCompare
+stringReverse
+	LDRB R4, [R5]		;get the address of the last letter	
+	STRB R4, [R2]		;store the last letter 
+
+	ADD R2, R2, #1		;inrement the address of the next store
+	SUB R5, R5, #1		;decrement the final letter address
+		
+stringReverseCompare
+	CMP R1, R5			;if endAddress == original address
+	BLE stringReverse	
+	
+	MOV R1, #0
+	STRB R1, [R2]		;make the new string null terminated
+	
+stop	B	stop
